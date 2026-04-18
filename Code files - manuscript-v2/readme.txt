@@ -2,3 +2,5 @@ The main matlab files are as follows:
 1) for analysis with periodic enviroment - periodic_env.m
 2) for analysis with stochastic correlated enviroment - stochastic_correlated_env.m
 3) for analysis with step-wise change in the enviroment - Step_wise_change_stochastic_env.m
+
+Rest matlab files are functions necessary for the analyses
