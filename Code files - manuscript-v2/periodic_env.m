@@ -164,7 +164,8 @@ for N_indx = 1:length(N)
                 
                 env = discrete_period_biased_env(T(T_indx),total_time_steps+N(N_indx),Eh_bias(bias_indx)); % the state of the environment along each axis and timesteps
                 [cell_state_undated,~,avg_benefit,avg_benefit_with_time,pi_est_undated] = Phenotypic_adaptation_models(reward,cost,total_time_steps, env, N(N_indx), 0, c0(c0_indx));
-                
+
+                % adaptation_time(:,:,N_indx,c0_indx,T_indx,bias_indx) = mean_adaptation_time_periodic_env(N(N_indx),T(T_indx),q01,q10,Eh_bias(bias_indx));
                 [prob_state_1,prob_state_1_given_1] = cell_state_and_cond_prob_cell_state_bias_periodic_env(N(N_indx),T(T_indx),q01,q10,Eh_bias(bias_indx));
                 benefit(N_indx,c0_indx,T_indx,bias_indx,:) = [avg_benefit benefit_centered_moments_cal_periodic_env(T(T_indx),Eh_bias(bias_indx),reward,cost, prob_state_1, prob_state_1_given_1,c0(c0_indx))];
             end
