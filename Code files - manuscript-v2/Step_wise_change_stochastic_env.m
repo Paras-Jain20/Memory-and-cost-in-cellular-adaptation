@@ -72,12 +72,16 @@ for c0_indx = 1:c0_length
 
             transiton_matrix(1:2, 3) = [-S_l_fit*(1-double(S_l_fit>0)); -S_h_fit*(1-double(S_h_fit>0))];
             transiton_matrix(1:2,1:2) = (1-transiton_matrix(1:2,3)).*[P_s(1,1,n) P_s(1,2,n); P_s(2,1,n) P_s(2,2,n)];
-            growth_matrix(1:2,1:2) = [S_l_fit*double(S_l_fit>0) 0; 0 S_h_fit*double(S_h_fit>0)];
+            % growth_matrix(1:2,1:2) = [S_l_fit*double(S_l_fit>0) 0; 0 S_h_fit*double(S_h_fit>0)];
+            growth_matrix(1:2,1:2) = [1+S_l_fit*double(S_l_fit>0) 0; 0 1+S_h_fit*double(S_h_fit>0)];
 
             transiton_matrix(3,:) = [0 0 1];
+            growth_matrix(3,:) = [0 0 1];
 
-            x(n+1,:) = x(n,:)*(transiton_matrix+growth_matrix);
-            fd(n) = x(n,:)*sum(transiton_matrix+growth_matrix,2);
+            % x(n+1,:) = x(n,:)*(transiton_matrix+growth_matrix);
+            % fd(n) = x(n,:)*sum(transiton_matrix+growth_matrix,2);
+            x(n+1,:) = x(n,:)*(growth_matrix*transiton_matrix);
+            fd(n) = x(n,:)*sum(growth_matrix*transiton_matrix,2);
             x(n+1,:) = x(n+1,:)/fd(n);
 
             benefit_time_series(n,c0_indx,mean_env_pair_indx) = S_l_fit*(x(n,1)./sum(x(n,[1 2]),2)) + S_h_fit*(x(n,2)./sum(x(n,[1 2]),2));
@@ -396,12 +400,15 @@ for c0_indx = 1:c0_length
 
                 transiton_matrix(1:2, 3) = [-S_l_fit*(1-double(S_l_fit>0)); -S_h_fit*(1-double(S_h_fit>0))];
                 transiton_matrix(1:2,1:2) = (1-transiton_matrix(1:2,3)).*[P_s(1,1,n) P_s(1,2,n); P_s(2,1,n) P_s(2,2,n)];
-                growth_matrix(1:2,1:2) = [S_l_fit*double(S_l_fit>0) 0; 0 S_h_fit*double(S_h_fit>0)];
+                growth_matrix(1:2,1:2) = [1+S_l_fit*double(S_l_fit>0) 0; 0 1+S_h_fit*double(S_h_fit>0)];
 
                 transiton_matrix(3,:) = [0 0 1];
+                growth_matrix(3,:) = [0 0 1];
 
-                x(n+1,:) = x(n,:)*(transiton_matrix+growth_matrix);
-                fd(n) = x(n,:)*sum(transiton_matrix+growth_matrix,2);
+                % x(n+1,:) = x(n,:)*(transiton_matrix+growth_matrix);
+                % fd(n) = x(n,:)*sum(transiton_matrix+growth_matrix,2);
+                x(n+1,:) = x(n,:)*(growth_matrix*transiton_matrix);
+                fd(n) = x(n,:)*sum(growth_matrix*transiton_matrix,2);
                 x(n+1,:) = x(n+1,:)/fd(n);
 
                 benefit_time_series(n,c0_indx,prime_indx,intermediate_env_indx) = S_l_fit*(x(n,1)./sum(x(n,[1 2]),2)) + S_h_fit*(x(n,2)./sum(x(n,[1 2]),2));
@@ -670,12 +677,17 @@ for N_indx = 1:length(N)
 
                     transiton_matrix(1:2, 3) = [-S_l_fit*(1-double(S_l_fit>0)); -S_h_fit*(1-double(S_h_fit>0))];
                     transiton_matrix(1:2,1:2) = (1-transiton_matrix(1:2,3)).*[P_s(1,1,n) P_s(1,2,n); P_s(2,1,n) P_s(2,2,n)];
-                    growth_matrix(1:2,1:2) = [S_l_fit*double(S_l_fit>0) 0; 0 S_h_fit*double(S_h_fit>0)];
+                    growth_matrix(1:2,1:2) = [1+S_l_fit*double(S_l_fit>0) 0; 0 1+S_h_fit*double(S_h_fit>0)];
 
                     transiton_matrix(3,:) = [0 0 1];
+                    growth_matrix(3,:) = [0 0 1];
 
-                    x(n+1,:) = x(n,:)*(transiton_matrix+growth_matrix);
-                    fd(n) = x(n,:)*sum(transiton_matrix+growth_matrix,2);
+                    % x(n+1,:) = x(n,:)*(transiton_matrix+growth_matrix);
+                    % fd(n) = x(n,:)*sum(transiton_matrix+growth_matrix,2);
+
+                    x(n+1,:) = x(n,:)*(growth_matrix*transiton_matrix);
+                    fd(n) = x(n,:)*sum(growth_matrix*transiton_matrix,2);
+
                     x(n+1,:) = x(n+1,:)/fd(n);
 
                     benefit_time_series(n,c0_indx,prime_indx,intermediate_env_indx) = S_l_fit*(x(n,1)./sum(x(n,[1 2]),2)) + S_h_fit*(x(n,2)./sum(x(n,[1 2]),2));
@@ -837,12 +849,13 @@ for intermediate_env_indx = 1%:2%intermediate_env_length
 
                 transiton_matrix(2*(c0_indx)-1:2*(c0_indx), 2*(length(c0_set))+1) = [-S_l_fit(c0_indx)*(1-double(S_l_fit(c0_indx)>0)); -S_h_fit(c0_indx)*(1-double(S_h_fit(c0_indx)>0))];                
                 transiton_matrix(2*(c0_indx)-1:2*(c0_indx),2*(c0_indx)-1:2*(c0_indx)) = (1-transiton_matrix(2*(c0_indx)-1:2*(c0_indx), 2*(length(c0_set))+1)).*[P_s(1,1,n,c0_indx) P_s(1,2,n,c0_indx); P_s(2,1,n,c0_indx) P_s(2,2,n,c0_indx)];
-                growth_matrix(2*(c0_indx)-1:2*(c0_indx),2*(c0_indx)-1:2*(c0_indx)) = [S_l_fit(c0_indx)*double(S_l_fit(c0_indx)>0) 0; 0 S_h_fit(c0_indx)*double(S_h_fit(c0_indx)>0)];
+                growth_matrix(2*(c0_indx)-1:2*(c0_indx),2*(c0_indx)-1:2*(c0_indx)) = [1+S_l_fit(c0_indx)*double(S_l_fit(c0_indx)>0) 0; 0 1+S_h_fit(c0_indx)*double(S_h_fit(c0_indx)>0)];
             end
                 transiton_matrix(end,:) = [zeros(1,2*length(c0_set)) 1];
+                growth_matrix(end,:) = [zeros(1,2*length(c0_set)) 1];
 
-                x(n+1,:) = x(n,:)*(transiton_matrix+growth_matrix);
-                fd(n) = x(n,:)*sum(transiton_matrix+growth_matrix,2);
+                x(n+1,:) = x(n,:)*(growth_matrix*transiton_matrix);
+                fd(n) = x(n,:)*sum(growth_matrix*transiton_matrix,2);
                 x(n+1,:) = x(n+1,:)/fd(n);
 
         end
@@ -1227,13 +1240,14 @@ for sce_indx = 1:2
 
                 transiton_matrix(2*(c0_indx)-1:2*(c0_indx), 2*(length(c0_set))+1) = [-S_l_fit(c0_indx)*(1-double(S_l_fit(c0_indx)>0)); -S_h_fit(c0_indx)*(1-double(S_h_fit(c0_indx)>0))];
                 transiton_matrix(2*(c0_indx)-1:2*(c0_indx),2*(c0_indx)-1:2*(c0_indx)) = (1-transiton_matrix(2*(c0_indx)-1:2*(c0_indx), 2*(length(c0_set))+1)).*[P_s(1,1,n,c0_indx) P_s(1,2,n,c0_indx); P_s(2,1,n,c0_indx) P_s(2,2,n,c0_indx)];
-                growth_matrix(2*(c0_indx)-1:2*(c0_indx),2*(c0_indx)-1:2*(c0_indx)) = [S_l_fit(c0_indx)*double(S_l_fit(c0_indx)>0) 0; 0 S_h_fit(c0_indx)*double(S_h_fit(c0_indx)>0)];
+                growth_matrix(2*(c0_indx)-1:2*(c0_indx),2*(c0_indx)-1:2*(c0_indx)) = [1+S_l_fit(c0_indx)*double(S_l_fit(c0_indx)>0) 0; 0 1+S_h_fit(c0_indx)*double(S_h_fit(c0_indx)>0)];
             end
             benefit_time_series(n,N_indx,sce_indx) = temp_benefit;
             transiton_matrix(end,:) = [zeros(1,2*length(c0_set)) 1];
+            growth_matrix(end,:) = [zeros(1,2*length(c0_set)) 1];
 
-            x(n+1,:) = x(n,:)*(transiton_matrix+growth_matrix);
-            fd(n) = x(n,:)*sum(transiton_matrix+growth_matrix,2);
+            x(n+1,:) = x(n,:)*(growth_matrix*transiton_matrix);
+            fd(n) = x(n,:)*sum(growth_matrix*transiton_matrix,2);
             x(n+1,:) = x(n+1,:)/fd(n);
         end
 
@@ -1327,11 +1341,11 @@ N = 40;
 total_time_steps = sum(analysis_time);
 
 high_cost_set = [0.0495/2 0.0495*(3/4) 0.0495];
-delta_cost = 0.5;%0:0.05:1; % upto 90% reduction in cost
+delta_cost = 0:0.02:1; % upto 90% reduction in cost
 % high_cost_set = [0.0495];
 % delta_cost = 0.5; % upto 90% reduction in cost
 
-delta_pop_per = 0.02:0.02:5;
+delta_pop_per = 0.04;%0.02:0.02:5;
 end_env_pair = [0 1];
 benefit_time_series = zeros(analysis_time(2),length(delta_cost),length(high_cost_set),length(delta_pop_per),2);
 mean_cell_count = zeros(total_time_steps,length(delta_cost),length(high_cost_set),length(delta_pop_per),2);
@@ -1408,13 +1422,14 @@ for high_cost_indx = 1:length(high_cost_set)
 
                             transiton_matrix(2*(c0_indx)-1:2*(c0_indx), 2*(length(c0_set))+1) = [-S_l_fit(c0_indx)*(1-double(S_l_fit(c0_indx)>0)); -S_h_fit(c0_indx)*(1-double(S_h_fit(c0_indx)>0))];
                             transiton_matrix(2*(c0_indx)-1:2*(c0_indx),2*(c0_indx)-1:2*(c0_indx)) = (1-transiton_matrix(2*(c0_indx)-1:2*(c0_indx), 2*(length(c0_set))+1)).*[P_s(1,1,n,c0_indx) P_s(1,2,n,c0_indx); P_s(2,1,n,c0_indx) P_s(2,2,n,c0_indx)];
-                            growth_matrix(2*(c0_indx)-1:2*(c0_indx),2*(c0_indx)-1:2*(c0_indx)) = [S_l_fit(c0_indx)*double(S_l_fit(c0_indx)>0) 0; 0 S_h_fit(c0_indx)*double(S_h_fit(c0_indx)>0)];
+                            growth_matrix(2*(c0_indx)-1:2*(c0_indx),2*(c0_indx)-1:2*(c0_indx)) = [1+S_l_fit(c0_indx)*double(S_l_fit(c0_indx)>0) 0; 0 1+S_h_fit(c0_indx)*double(S_h_fit(c0_indx)>0)];
                         end
                         benefit_time_series(n,delta_indx,high_cost_indx,delta_pop_per_indx,sce_indx) = temp_benefit;
                         transiton_matrix(end,:) = [zeros(1,2*length(c0_set)) 1];
+                        growth_matrix(end,:) = [zeros(1,2*length(c0_set)) 1];
 
-                        x(n+1,:) = x(n,:)*(transiton_matrix+growth_matrix);
-                        fd(n) = x(n,:)*sum(transiton_matrix+growth_matrix,2);
+                        x(n+1,:) = x(n,:)*(growth_matrix*transiton_matrix);
+                        fd(n) = x(n,:)*sum(growth_matrix*transiton_matrix,2);
                         x(n+1,:) = x(n+1,:)/fd(n);
                     end
 
@@ -1483,35 +1498,35 @@ end
 % xlabel('low cost cell fraction');
 % end
 
-% color_order = ["#0072BD", "#D95319","#EDB120","#77AC30"];
-% figure('Position',[1069 555 466 251])
-% for high_cost_indx = 1:length(high_cost_set)
-% plot(delta_cost*100,mean_cell_count(end,:,high_cost_indx,1,1),'-','LineWidth',2,Color=color_order(high_cost_indx));
-% hold on
-% plot(delta_cost*100,mean_cell_count(end,:,high_cost_indx,1,2),'-.','LineWidth',2,Color=color_order(high_cost_indx));
-% end
+color_order = ["#0072BD", "#D95319","#EDB120","#77AC30"];
+figure('Position',[1069 555 466 251])
+for high_cost_indx = 1:length(high_cost_set)
+plot(delta_cost*100,mean_cell_count(end,:,high_cost_indx,1,1),'-','LineWidth',2,Color=color_order(high_cost_indx));
+hold on
+plot(delta_cost*100,mean_cell_count(end,:,high_cost_indx,1,2),'-.','LineWidth',2,Color=color_order(high_cost_indx));
+end
+yscale log
+ylabel([{'End time point'},{'total cell counts'}]);
+ax = gca;
+ax.YTick = 10.^(2:8);
+ax.FontSize = 14;
+grid on
+xlabel('% cost difference');
+% xlim([min(N) max(N)])
+
+figure('Position',[1069 555 466 251])
+for high_cost_indx = 1:length(high_cost_set)
+plot(delta_cost*100,log10(mean_cell_count(end,:,high_cost_indx,1,2)./mean_cell_count(end,:,high_cost_indx,1,1)),'LineWidth',2);
+hold on
+end
 % yscale log
-% ylabel([{'End time point'},{'total cell counts'}]);
-% ax = gca;
-% ax.YTick = 10.^(2:8);
-% ax.FontSize = 14;
-% grid on
-% xlabel('% cost difference');
-% % xlim([min(N) max(N)])
-% 
-% figure('Position',[1069 555 466 251])
-% for high_cost_indx = 1:length(high_cost_set)
-% plot(delta_cost*100,log10(mean_cell_count(end,:,high_cost_indx,1,2)./mean_cell_count(end,:,high_cost_indx,1,1)),'LineWidth',2);
-% hold on
-% end
-% % yscale log
-% ylabel(['log_{10}(fold change)']);
-% ax = gca;
-% % ax.YTick = 0:25:200;
-% ax.FontSize = 14;
-% grid on
-% xlabel('% cost difference');
-% % xlim([min(N) max(N)])
+ylabel(['log_{10}(fold change)']);
+ax = gca;
+% ax.YTick = 0:25:200;
+ax.FontSize = 14;
+grid on
+xlabel('% cost difference');
+% xlim([min(N) max(N)])
 
 color_order = ["#0072BD", "#D95319","#EDB120","#77AC30"];
 figure('Position',[1069 555 466 251])
